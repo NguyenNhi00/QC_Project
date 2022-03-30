@@ -2,7 +2,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/presentation/bloc/login_bloc.dart';
+import 'package:flutter_application_1/presentation/bloc/report_bloc.dart';
 import 'package:flutter_application_1/presentation/event/login_event.dart';
+import 'package:flutter_application_1/presentation/event/report_event.dart';
 import 'package:flutter_application_1/presentation/state/login_state.dart';
 import 'package:flutter_application_1/presentation/view/dialog.dart';
 import 'package:flutter_application_1/presentation/view/home_screen.dart';

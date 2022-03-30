@@ -16,8 +16,8 @@ const  DimensionModel({String? name, double? upperBound, double? lowerBound}) : 
 factory DimensionModel.fromJson(Map<String,dynamic> json) {
   return DimensionModel(
     name : json["name"] as String, 
-    upperBound: json["upperBound"] as double, 
-    lowerBound: json["lowerBound"] as double,
+    upperBound: double.parse(json["upperBound"].toString()), 
+    lowerBound: double.parse(json["lowerBound"].toString()) ,
   );
 }
 }
@@ -48,7 +48,7 @@ const  StandardModel({
  factory StandardModel.fromJson(Map<String,dynamic> json){
    return StandardModel(
      id: json["id"] as String,
-     product: json["product"] as Product,
+     product: json["product"] != null ? new ProductModel.fromJson(json['product']): null,
      fileLink: json["fileName"] as String,
      dimensions: json["dimensions"] == null
           ?[]

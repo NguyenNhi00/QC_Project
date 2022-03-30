@@ -36,3 +36,4 @@ class Standard extends Equatable {
   List<Object?> get props =>
       [id, product, dimensions, appearanceErrors, fileLink];
 }
+

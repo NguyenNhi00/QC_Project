@@ -49,7 +49,7 @@ class ReportToggleAddState3 extends ReportState{
   @override
   List<Object> get props => [count3,];
 }
-// tao mot inputtextfield khi nhan iconbutton_add tieu chuan 3
+// tao mot inputtextfield khi nhan iconbutton_add tieu chuan 4
 // ignore: must_be_immutable
 class ReportToggleAddState4 extends ReportState{
   int count4;

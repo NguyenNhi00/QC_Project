@@ -16,6 +16,7 @@ import 'package:flutter_application_1/presentation/widgets/viewpdf.dart';
 import 'package:flutter_application_1/presentation/widgets/widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:textfield_search/textfield_search.dart';
 
 class QuanlityScreen extends StatefulWidget {
 
@@ -39,10 +40,33 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
    String checkingTime = '';
    String checkingDate = '';
   bool visible = false;
+  static bool visiblContain = false;
+  int _value = 0;
   List<Standard> _standard = [];
   List<QcReport> _qcReport = [];
   //final double dimension1 = 0;
- 
+  TextEditingController myController = TextEditingController();
+  
+  String label = "ProducId";
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    myController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Start listening to changes.
+    myController.addListener(_printLatestValue);
+  }
+
+  _printLatestValue() {
+    // ignore: avoid_print
+    print("Textfield value: ${myController.text}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -231,6 +255,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: BlocConsumer<ReportBloc, ReportState>(
+              
                 listener: (context, reportState) {
               if(reportState is IntState){
                 todayDate(){
@@ -242,6 +267,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
               }
               else if(reportState is GetStandarState){
                  _standard = reportState.standar;
+                 print(_standard);
               }
               else if (reportState is ReportToggleAddState) {
                 _count++;
@@ -260,6 +286,9 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                  _time4 = _qcReport[0].dimensionResults![4].time! + 1;
               }else if(reportState is ReportCheckingState){
                 _qcReport = reportState.qcReport;
+              } else if(reportState is ReportCheckingState){}
+              else if(reportState is ReportDoneState){}
+              else{
               }
             }, builder: (context, reportState) {
               if(reportState is GetStandarState){
@@ -293,7 +322,34 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       // top: 7.0,
                                       //  bottom: 7.0,
                                       right: 0.0),
-                                  child: TextfieldSeach(_standard)),
+                                  child: 
+                                  Container(
+                                      height: 50.0,
+                                      width: 250.0,
+                                      alignment:Alignment.center,
+                                      child: TextFieldSearch(
+                                        textStyle: TextStyle(fontSize: 20,),
+                                          label: label,
+                                          initialList: List<String>.generate( _standard.length, (index) => _standard[index].id.toString()),
+                                          controller: myController,
+                                          decoration: InputDecoration(
+                                            // textAlign: TextAlign.center,
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(color: Colors.black)
+                                                  ),
+                                                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black) )
+                                                  ),
+                                              future: (){
+                                                Global.Id = myController.text;
+                                                for(int i = 0; i< _standard.length; i++){
+                                                  if(myController.text == _standard[i].product!.id.toString()){
+                                                    Global.i = i;
+                                                  }
+                                                }
+                                              },
+                                                ),
+                                    ),
+                                  ),
                               SizedBox(
                                 // width: SizeConfig.screenWidth * 0.05242,
                                 width: 250,
@@ -404,12 +460,18 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                 Row(
                                   children: [
                                     TextAnnotation(
-                                        text: _standard[Global.i].dimensions![0].name.toString()), // lay dư lieu "name" gan vao day
+                                        text:
+                                          _standard[Global.i].dimensions![0].name.toString()
+                                        // _standard[0].product!.name.toString()
+                                         ), // lay dư lieu "name" gan vao day
                                     SizedBox(
                                       width: 10,
                                     ),
                                     // ignore: unnecessary_string_interpolations
-                                    ContainerTextDimenion('${_standard[Global.i].dimensions![0].lowerBound.toString()} - ${_standard[Global.i].dimensions![0].upperBound.toString()}'), // lay dư lieu "productStanderDimension" gan vao day
+                                    ContainerTextDimenion(
+                                      
+                                      '${_standard[Global.i].dimensions![0].lowerBound.toString()} - ${_standard[Global.i].dimensions![0].upperBound.toString()}'
+                                    ), // lay dư lieu "productStanderDimension" gan vao day
                                     SizedBox(
                                       width: 20,
                                     ),
@@ -494,19 +556,24 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                 Row(
                                   children: [
                                     TextAnnotation(
-                                        text: _standard[Global.i].dimensions![1].name.toString()), // lay dư lieu "name" gan vao day
+                                        text:
+                                        //_standard[Global.i].product!.name.toString()
+                                         _standard[Global.i].dimensions![0].name.toString()
+                                         ), // lay dư lieu "name" gan vao day
                                     SizedBox(
                                       width: 10,
                                     ),
                                     ContainerTextDimenion(
-                                        '${_standard[Global.i].dimensions![1].lowerBound.toString()} - ${_standard[Global.i].dimensions![1].upperBound.toString()}'), // lay dư lieu "productStanderDimension" gan vao day
+                                      
+                                         '${_standard[Global.i].dimensions![0].lowerBound.toString()} - ${_standard[Global.i].dimensions![0].upperBound.toString()}'
+                                        ), // lay dư lieu "productStanderDimension" gan vao day
                                     SizedBox(
                                       width: 20,
                                     ),
                                     Container(
                                       height: 50.0,
                                       width: 330.0,
-                                      child: InputTextField2(_time1,_qcReport,_standard[Global.i].dimensions![1]),
+                                      child: InputTextField2(_time1,_qcReport,_standard[Global.i].dimensions![0]),
                                     ),
                                     //    customCheckboxState()
                                     SizedBox(
@@ -531,7 +598,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![1]),
+                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count1 > 0,
@@ -542,7 +609,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![1]),
+                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count1 > 1,
@@ -553,7 +620,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![1]),
+                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count1 > 2,
@@ -564,7 +631,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![1]),
+                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count1 > 3,
@@ -575,7 +642,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![1]),
+                                       InputDimensionTextFiled2(_time1,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count1 > 4,
@@ -592,19 +659,24 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                     Row(
                                       children: [
                                         TextAnnotation(
-                                            text: _standard[Global.i].dimensions![2].name.toString()), // lay dư lieu "name" gan vao day
+                                            text:
+                                            // _standard[Global.i].product!.name.toString() 
+                                            _standard[Global.i].dimensions![0].name.toString()
+                                            ), // lay dư lieu "name" gan vao day
                                         SizedBox(
                                           width: 10,
                                         ),
                                         ContainerTextDimenion(
-                                            '${_standard[Global.i].dimensions![2].lowerBound.toString()} - ${_standard[Global.i].dimensions![2].upperBound.toString()}'), // lay dư lieu "productStanderDimension" gan vao day
+                                            // _standard[Global.i].dimensions![0].lowerBound.toDouble()
+                                            '${_standard[Global.i].dimensions![0].lowerBound.toString()} - ${_standard[Global.i].dimensions![0].upperBound.toString()}'
+                                            ), // lay dư lieu "productStanderDimension" gan vao day
                                         SizedBox(
                                           width: 20,
                                         ),
                                         Container(
                                           height: 50.0,
                                           width: 330.0,
-                                          child: InputTextField3(_time2,_qcReport,_standard[Global.i].dimensions![2]),
+                                          child: InputTextField3(_time2,_qcReport,_standard[Global.i].dimensions![0]),
                                         ),
                                         //  customCheckboxState(),
                                         SizedBox(
@@ -629,7 +701,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                           SizedBox(
                                             width: 55,
                                           ),
-                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![2]),
+                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![0]),
                                         ],
                                       ),
                                       visible: _QuanlityScreenState._count2 > 0,
@@ -640,7 +712,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                           SizedBox(
                                             width: 55,
                                           ),
-                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![2]),
+                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![0]),
                                         ],
                                       ),
                                       visible: _QuanlityScreenState._count2 > 1,
@@ -651,7 +723,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                           SizedBox(
                                             width: 55,
                                           ),
-                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![2]),
+                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![0]),
                                         ],
                                       ),
                                       visible: _QuanlityScreenState._count2 > 2,
@@ -662,7 +734,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                           SizedBox(
                                             width: 55,
                                           ),
-                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![2]),
+                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![0]),
                                         ],
                                       ),
                                       visible: _QuanlityScreenState._count2 > 3,
@@ -673,7 +745,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                           SizedBox(
                                             width: 55,
                                           ),
-                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![2]),
+                                           InputDimensionTextFiled3(_time2,_qcReport,_standard[Global.i].dimensions![0]),
                                         ],
                                       ),
                                       visible: _QuanlityScreenState._count2 > 4,
@@ -692,19 +764,24 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                 Row(
                                   children: [
                                     TextAnnotation(
-                                        text: _standard[Global.i].dimensions![3].name.toString()), // lay dư lieu "name" gan vao day
+                                        text: 
+                                        // _standard[Global.i].product!.name.toString()
+                                        _standard[Global.i].dimensions![0].name.toString()
+                                        ), // lay dư lieu "name" gan vao day
                                     SizedBox(
                                       width: 10,
                                     ),
                                     ContainerTextDimenion(
-                                        '${_standard[Global.i].dimensions![3].lowerBound.toString()} - ${_standard[Global.i].dimensions![3].upperBound.toString()}'), // lay dư lieu "productStanderDimension" gan vao day
+                                      
+                                        '${_standard[Global.i].dimensions![0].lowerBound.toString()} - ${_standard[Global.i].dimensions![0].upperBound.toString()}'
+                                        ), // lay dư lieu "productStanderDimension" gan vao day
                                     SizedBox(
                                       width: 20,
                                     ),
                                     Container(
                                       height: 50.0,
                                       width: 330.0,
-                                      child: InputTextField4(_time3,_qcReport,_standard[Global.i].dimensions![3]),
+                                      child: InputTextField4(_time3,_qcReport,_standard[Global.i].dimensions![0]),
                                     ),
                                     // customCheckboxState(),
                                     SizedBox(
@@ -728,7 +805,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![3]),
+                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count3 > 0,
@@ -739,7 +816,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![3]),
+                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count3 > 1,
@@ -750,7 +827,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![3]),
+                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count3 > 2,
@@ -761,7 +838,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![3]),
+                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count3 > 3,
@@ -772,7 +849,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![3]),
+                                       InputDimensionTextFiled4(_time3,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count3 > 4,
@@ -789,19 +866,21 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                 Row(
                                   children: [
                                     TextAnnotation(
-                                        text: _standard[Global.i].dimensions![4].name.toString()), // lay dư lieu "name" gan vao day
+                                        text: _standard[Global.i].dimensions![0].name.toString()), // lay dư lieu "name" gan vao day
                                     SizedBox(
                                       width: 10,
                                     ),
                                     ContainerTextDimenion(
-                                        '${_standard[Global.i].dimensions![4].lowerBound.toString()} - ${_standard[Global.i].dimensions![4].upperBound.toString()}'), // lay dư lieu "productStanderDimension" gan vao day
+                                      
+                                        '${_standard[Global.i].dimensions![0].lowerBound.toString()} - ${_standard[Global.i].dimensions![0].upperBound.toString()}'
+                                        ), // lay dư lieu "productStanderDimension" gan vao day
                                     SizedBox(
                                       width: 20,
                                     ),
                                     Container(
                                       height: 50.0,
                                       width: 330.0,
-                                      child: InputTextField5(_time4,_qcReport,_standard[Global.i].dimensions![4]),
+                                      child: InputTextField5(_time4,_qcReport,_standard[Global.i].dimensions![0]),
                                     ),
                                     // SizedBox(
                                     //   width: 5,
@@ -828,7 +907,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled5(_time4,_qcReport,_standard[Global.i].dimensions![4]),
+                                       InputDimensionTextFiled5(_time4,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count4 > 0,
@@ -839,7 +918,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled5(_time4,_qcReport,_standard[Global.i].dimensions![4]),
+                                       InputDimensionTextFiled5(_time4,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count4 > 1,
@@ -850,7 +929,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled5(_time4,_qcReport,_standard[Global.i].dimensions![4]),
+                                       InputDimensionTextFiled5(_time4,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count4 > 2,
@@ -861,7 +940,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled5(_time4,_qcReport,_standard[Global.i].dimensions![4]),
+                                       InputDimensionTextFiled5(_time4,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count4 > 3,
@@ -872,7 +951,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       SizedBox(
                                         width: 55,
                                       ),
-                                       InputDimensionTextFiled(_time4,_qcReport,_standard[Global.i].dimensions![4]),
+                                       InputDimensionTextFiled(_time4,_qcReport,_standard[Global.i].dimensions![0]),
                                     ],
                                   ),
                                   visible: _QuanlityScreenState._count4 > 4,
@@ -891,7 +970,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                           SizedBox(
                             height: 20,
                           ),
-                          RadioMethod(),
+                          RadioMethod(_standard),
                           SizedBox(
                             height: 30,
                           ),
@@ -984,8 +1063,8 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                         // top: 7.0,
                                         //  bottom: 7.0,
                                         right: 0.0),
-                                    child: InputTextFieldNumberProduct(int.parse(_qcReport[Global.i].batchQuantity.toString())),
-                                )],
+                                    child: InputTextFieldNumberProduct(10)),
+                                ],
                             ), //  lay du lieu ngày thang gan vào bien text của container,
                             SizedBox(
                               height: 70,
@@ -1003,7 +1082,7 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                                       Container(
                                           width: 200,
                                           height: 50,
-                                          child: ViewPdf('http://www.africau.edu/images/default/sample.pdf')),
+                                          child: Text('')),
                                       SizedBox(
                                         width: 30,
                                       ),
@@ -1019,10 +1098,10 @@ class _QuanlityScreenState extends State<QuanlityScreen> {
                   )
                 ])
               ]);
-            } else{
-              return Container();
-            }
-            } 
+            
+             } else{ return Text('fail');}
+             }
+            
             )));
   }
 }

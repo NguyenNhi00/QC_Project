@@ -147,7 +147,7 @@ class InputTextField extends StatelessWidget {
                 
                 if(_dimension.lowerBound! < double.parse(controller.text) && double.parse(controller.text) < _dimension.upperBound!){
                   checkPassed = !checkPassed;
-                  _qcReport[0].dimensionResults![0].result[_time] = double.tryParse(controller.text);
+                  _qcReport[0].dimensionResults![0].result[_time] = double.parse(controller.text);
                 }
               },
               decoration: InputDecoration(
@@ -240,7 +240,7 @@ class InputTextField2 extends StatelessWidget {
                 
                 if(_dimension.lowerBound! < double.parse(controller.text) && double.parse(controller.text) < _dimension.upperBound!){
                   checkPassed = !checkPassed;
-                  _qcReport[0].dimensionResults![1].result[_time] = double.tryParse(controller.text);
+                  _qcReport[0].dimensionResults![1].result[_time] = double.parse(controller.text);
                 }
               },
               decoration: InputDecoration(
@@ -333,7 +333,7 @@ class InputTextField3 extends StatelessWidget {
                 
                 if(_dimension.lowerBound! < double.parse(controller.text) && double.parse(controller.text) < _dimension.upperBound!){
                   checkPassed = !checkPassed;
-                  _qcReport[0].dimensionResults![2].result[_time] = double.tryParse(controller.text);
+                  _qcReport[0].dimensionResults![2].result[_time] = double.parse(controller.text);
                 }
               },
               decoration: InputDecoration(
@@ -425,7 +425,7 @@ class InputTextField4 extends StatelessWidget {
                 
                 if(_dimension.lowerBound! < double.parse(controller.text) && double.parse(controller.text) < _dimension.upperBound!){
                   checkPassed = !checkPassed;
-                  _qcReport[0].dimensionResults![3].result[_time] = double.tryParse(controller.text);
+                  _qcReport[0].dimensionResults![3].result[_time] = double.parse(controller.text);
                 }
               },
               decoration: InputDecoration(
@@ -517,7 +517,7 @@ class InputTextField5 extends StatelessWidget {
                 
                 if(_dimension.lowerBound! < double.parse(controller.text) && double.parse(controller.text) < _dimension.upperBound!){
                   checkPassed = !checkPassed;
-                  _qcReport[0].dimensionResults![3].result[_time] = double.tryParse(controller.text);
+                  _qcReport[0].dimensionResults![3].result[_time] = double.parse(controller.text);
                 }
               },
               decoration: InputDecoration(

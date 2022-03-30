@@ -20,9 +20,10 @@ class TextfieldSeach extends StatefulWidget {
   _TextfieldSeachState createState() => _TextfieldSeachState(standar);
 }
 class _TextfieldSeachState extends State<TextfieldSeach> {
-  List<Standard> standar;
-  _TextfieldSeachState(this.standar);
+  List<Standard> _standar;
   TextEditingController myController = TextEditingController();
+  _TextfieldSeachState(this._standar);
+  
   String label = "ProducId";
   @override
   void dispose() {
@@ -54,7 +55,7 @@ class _TextfieldSeachState extends State<TextfieldSeach> {
         child: TextFieldSearch(
           textStyle: TextStyle(fontSize: 20,),
             label: label,
-            initialList: List<String>.generate( standar.length, (index) => standar[index].id.toString()),
+            initialList: List<String>.generate( _standar.length, (index) => _standar[index].id.toString()),
             controller: myController,
             decoration: InputDecoration(
                // textAlign: TextAlign.center,
@@ -63,10 +64,10 @@ class _TextfieldSeachState extends State<TextfieldSeach> {
                     ),
                     focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black) )
                     ),
-                getSelectedValue: (){
+                future: (){
                   Global.Id = myController.text;
-                  for(int i = 0; i< standar.length; i++){
-                    if(myController.text == standar[i].product!.id.toString()){
+                  for(int i = 0; i< _standar.length; i++){
+                    if(myController.text == _standar[i].product!.id.toString()){
                       Global.i = i;
                     }
                   }
